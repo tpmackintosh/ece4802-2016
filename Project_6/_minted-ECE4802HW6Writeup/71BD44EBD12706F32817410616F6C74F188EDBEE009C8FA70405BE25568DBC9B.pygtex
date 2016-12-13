@@ -1,0 +1,77 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{random}
+\PYG{k+kn}{import} \PYG{n+nn}{math}
+\PYG{k+kn}{from} \PYG{n+nn}{Crypto.Util} \PYG{k+kn}{import} \PYG{n}{number}
+
+\PYG{k}{def} \PYG{n+nf}{pad}\PYG{p}{(}\PYG{n}{M}\PYG{p}{,}\PYG{n}{N}\PYG{p}{):}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    The function that return padded message with size |N| \PYGZhy{}1}
+\PYG{l+s+sd}{    first generate random r and return r||M}
+\PYG{l+s+sd}{    The size of r is determined by size of M and N}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{magN} \PYG{o}{=} \PYG{l+m+mi}{1024}
+    \PYG{n}{l} \PYG{o}{=} \PYG{l+m+mi}{256}
+    \PYG{n}{r} \PYG{o}{=} \PYG{n}{random}\PYG{o}{.}\PYG{n}{getrandbits}\PYG{p}{(}\PYG{n}{magN} \PYG{o}{\PYGZhy{}} \PYG{n}{l} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{n}{r} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{p}{(}\PYG{n}{magN} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{n}{res} \PYG{o}{=} \PYG{n}{r} \PYG{o}{|} \PYG{n}{M}
+    \PYG{k}{return} \PYG{n}{res}
+
+\PYG{k}{def} \PYG{n+nf}{paddedRSAEnc}\PYG{p}{(}\PYG{n}{m}\PYG{p}{,}\PYG{n}{e}\PYG{p}{,}\PYG{n}{n}\PYG{p}{):}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    The function that return m\PYGZca{}e (mod n)}
+\PYG{l+s+sd}{    We know that m = r||M}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{enc} \PYG{o}{=} \PYG{n+nb}{pow}\PYG{p}{(}\PYG{n}{m}\PYG{p}{,}\PYG{n}{e}\PYG{p}{,}\PYG{n}{n}\PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{enc}
+
+\PYG{k}{def} \PYG{n+nf}{paddedRSADec}\PYG{p}{(}\PYG{n}{c}\PYG{p}{,}\PYG{n}{d}\PYG{p}{,}\PYG{n}{n}\PYG{p}{,}\PYG{n}{l}\PYG{p}{):}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    The function that return last l bit of c\PYGZca{}d (mod n)}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{res} \PYG{o}{=} \PYG{n+nb}{bin}\PYG{p}{(}\PYG{n+nb}{pow}\PYG{p}{(}\PYG{n}{c}\PYG{p}{,}\PYG{n}{d}\PYG{p}{,}\PYG{n}{n}\PYG{p}{))[:}\PYG{n}{l}\PYG{o}{+}\PYG{l+m+mi}{2}\PYG{p}{]}
+    \PYG{k}{return} \PYG{n}{res}
+
+
+\PYG{k}{def} \PYG{n+nf}{RSAGen}\PYG{p}{():}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    The function to create prime numbers p and q}
+\PYG{l+s+sd}{    calculate N = p*q and phi = (p\PYGZhy{}1)*(q\PYGZhy{}1) and}
+\PYG{l+s+sd}{    also public key \PYGZlt{}N,e\PYGZgt{} and private key \PYGZlt{}p,q,d\PYGZgt{}}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+
+    \PYG{n}{q} \PYG{o}{=} \PYG{n}{number}\PYG{o}{.}\PYG{n}{getPrime}\PYG{p}{(}\PYG{l+m+mi}{512}\PYG{p}{)}
+    \PYG{n}{p} \PYG{o}{=} \PYG{n}{number}\PYG{o}{.}\PYG{n}{getPrime}\PYG{p}{(}\PYG{l+m+mi}{512}\PYG{p}{)}
+
+    \PYG{n}{n} \PYG{o}{=} \PYG{n}{p}\PYG{o}{*}\PYG{n}{q}
+    \PYG{n}{phi} \PYG{o}{=} \PYG{p}{(}\PYG{n}{p}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{*}\PYG{p}{(}\PYG{n}{q}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{k}{print}\PYG{p}{(}\PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{math}\PYG{o}{.}\PYG{n}{log}\PYG{p}{(}\PYG{n}{phi}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{k}{print}\PYG{p}{(}\PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{math}\PYG{o}{.}\PYG{n}{log}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{n}{e} \PYG{o}{=} \PYG{l+m+mi}{2}\PYG{o}{**}\PYG{l+m+mi}{16}\PYG{o}{+}\PYG{l+m+mi}{1}
+    \PYG{k}{if} \PYG{n}{number}\PYG{o}{.}\PYG{n}{GCD}\PYG{p}{(}\PYG{n}{e}\PYG{p}{,}\PYG{n}{phi}\PYG{p}{)} \PYG{o}{!=} \PYG{l+m+mi}{1}\PYG{p}{:} \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Error: GCD(e,phi) != 1.\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{d} \PYG{o}{=} \PYG{n}{number}\PYG{o}{.}\PYG{n}{inverse}\PYG{p}{(}\PYG{n}{e}\PYG{p}{,}\PYG{n}{phi}\PYG{p}{)}
+
+    \PYG{k}{return} \PYG{n}{e}\PYG{p}{,}\PYG{n}{d}\PYG{p}{,}\PYG{n}{n}
+
+\PYG{k}{def} \PYG{n+nf}{RSATest}\PYG{p}{():}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    create random message and encrypt the message}
+\PYG{l+s+sd}{    to get ciphertext and decrypt the ciphertext to}
+\PYG{l+s+sd}{    getback to plaintext.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{M} \PYG{o}{=} \PYG{n}{random}\PYG{o}{.}\PYG{n}{randint}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{o}{**}\PYG{l+m+mi}{256}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}
+    \PYG{p}{(}\PYG{n}{e}\PYG{p}{,}\PYG{n}{d}\PYG{p}{,}\PYG{n}{N}\PYG{p}{)} \PYG{o}{=} \PYG{n}{RSAGen}\PYG{p}{()}
+    \PYG{n}{padded\PYGZus{}message} \PYG{o}{=} \PYG{n}{pad}\PYG{p}{(}\PYG{n}{M}\PYG{p}{,}\PYG{n}{N}\PYG{p}{)}
+
+    \PYG{n}{c} \PYG{o}{=} \PYG{n}{paddedRSAEnc}\PYG{p}{(}\PYG{n}{M}\PYG{p}{,}\PYG{n}{e}\PYG{p}{,}\PYG{n}{N}\PYG{p}{)}
+    \PYG{n}{l} \PYG{o}{=} \PYG{l+m+mi}{256}
+    \PYG{n}{M1} \PYG{o}{=} \PYG{n}{paddedRSADec}\PYG{p}{(}\PYG{n}{c}\PYG{p}{,}\PYG{n}{d}\PYG{p}{,}\PYG{n}{N}\PYG{p}{,}\PYG{n}{l}\PYG{p}{)}
+    \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}M1 = \PYGZdq{}}\PYG{p}{,} \PYG{n}{M1}\PYG{p}{)}
+    \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}M =  \PYGZdq{}}\PYG{p}{,} \PYG{n+nb}{bin}\PYG{p}{(}\PYG{n}{M}\PYG{p}{))}
+    \PYG{k}{if} \PYG{n}{M} \PYG{o}{==} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{M1}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{):}
+        \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Correct\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Wrong ...\PYGZdq{}}\PYG{p}{)}
+
+
+\PYG{n}{RSATest}\PYG{p}{()}
+\end{Verbatim}
